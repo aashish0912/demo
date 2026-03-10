@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice AI Orb</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background-image: url('55degrees.png');
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      font-family: 'DM Sans', sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="voiceai-6nzfu624k" class="voiceai-orb-wrapper-enh">
+
+    <div class="voiceai-scene">
+      <div class="voiceai-glow-bg"></div>
+      <div class="voiceai-ripple r1"></div>
+      <div class="voiceai-ripple r2"></div>
+      <div class="voiceai-ripple r3"></div>
+
+      <button class="voiceai-orb-enh" aria-label="Voice AI Assistant">
+        <div class="voiceai-sheen"></div>
+        <div class="voiceai-spinner-orb"></div>
+
+        <svg class="voiceai-orb-icon-enh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="8.5" y="2" width="7" height="13" rx="3.5" />
+          <path d="M5 10a7 7 0 0 0 14 0" />
+          <line x1="12" y1="17" x2="12" y2="21" />
+          <line x1="8.5" y1="21" x2="15.5" y2="21" />
+        </svg>
+
+        <div class="voiceai-orb-status-enh">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </button>
+    </div>
+
+    <p class="voiceai-tap-label">Tap to speak</p>
+
+    <div class="voiceai-status-msg-orb"></div>
+    <div class="voiceai-connection-orb">
+      <div class="voiceai-connection-dot-orb"></div>
+      <span class="voiceai-connection-text-orb">Live</span>
+    </div>
+  </div>
+
+  <style>
+    :root {
+      --clr: #34d399;
+      --clr-glow: rgba(52, 211, 153, 0.2);
+      --orb: 72px;
+    }
+
+    #voiceai-6nzfu624k {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      z-index: 9999;
+    }
+
+    /* Scene */
+    .voiceai-scene {
+      position: relative;
+      width: var(--orb);
+      height: var(--orb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Ambient glow */
+    .voiceai-glow-bg {
+      position: absolute;
+      inset: -18px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--clr-glow) 0%, transparent 70%);
+      animation: va-breathe 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* Ripple rings */
+    .voiceai-ripple {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid var(--clr);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #voiceai-6nzfu624k.is-active .voiceai-ripple.r1 {
+      animation: va-ripple 2.4s ease-out infinite 0.0s;
+    }
+
+    #voiceai-6nzfu624k.is-active .voiceai-ripple.r2 {
+      animation: va-ripple 2.4s ease-out infinite 0.8s;
+    }
+
+    #voiceai-6nzfu624k.is-active .voiceai-ripple.r3 {
+      animation: va-ripple 2.4s ease-out infinite 1.6s;
+    }
+
+    /* Orb button */
+    .voiceai-orb-enh {
+      position: relative;
+      width: var(--orb);
+      height: var(--orb);
+      border-radius: 50%;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      -webkit-tap-highlight-color: transparent;
+
+      background:
+        radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.13) 0%, transparent 52%),
+        linear-gradient(150deg, #1b4332 0%, #0d2b1d 55%, #061510 100%);
+
+      box-shadow:
+        0 0 0 1px rgba(52, 211, 153, 0.18),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 10px 36px rgba(0, 0, 0, 0.7),
+        0 0 50px rgba(52, 211, 153, 0.07);
+
+      transition: box-shadow 0.4s ease, transform 0.2s ease, background 0.5s ease;
+      animation: va-float 5s ease-in-out infinite;
+    }
+
+    .voiceai-orb-enh:hover:not(:disabled) {
+      box-shadow:
+        0 0 0 1px rgba(52, 211, 153, 0.38),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+        0 14px 44px rgba(0, 0, 0, 0.65),
+        0 0 70px rgba(52, 211, 153, 0.2);
+      transform: translateY(-4px) scale(1.03);
+      animation-play-state: paused;
+    }
+
+    .voiceai-orb-enh:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+
+    .voiceai-orb-enh.active {
+      background:
+        radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.18) 0%, transparent 52%),
+        linear-gradient(150deg, #1f5c42 0%, #0e3d28 55%, #071f14 100%);
+
+      box-shadow:
+        0 0 0 1.5px rgba(52, 211, 153, 0.55),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+        0 10px 40px rgba(0, 0, 0, 0.55),
+        0 0 70px rgba(52, 211, 153, 0.32),
+        0 0 110px rgba(52, 211, 153, 0.12);
+    }
+
+    .voiceai-orb-enh:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Glass sheen */
+    .voiceai-sheen {
+      position: absolute;
+      top: 7%;
+      left: 14%;
+      width: 40%;
+      height: 36%;
+      background: radial-gradient(ellipse, rgba(255, 255, 255, 0.13) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: rotate(-18deg);
+    }
+
+    /* Spinner */
+    .voiceai-spinner-orb {
+      position: absolute;
+      inset: 5px;
+      border-radius: 50%;
+      border: 1.5px solid transparent;
+      border-top-color: var(--clr);
+      border-right-color: rgba(52, 211, 153, 0.25);
+      animation: va-spin 1.1s linear infinite;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .voiceai-orb-enh.loading .voiceai-spinner-orb {
+      opacity: 1;
+    }
+
+    /* Mic icon */
+    .voiceai-orb-icon-enh {
+      width: 26px;
+      height: 26px;
+      color: var(--clr);
+      position: relative;
+      z-index: 2;
+      filter: drop-shadow(0 0 9px rgba(52, 211, 153, 0.55));
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .voiceai-orb-enh.active .voiceai-orb-icon-enh {
+      opacity: 0;
+      transform: scale(0.55);
+    }
+
+    /* Status waveform bars */
+    .voiceai-orb-status-enh {
+      position: absolute;
+      bottom: 10px;
+      display: flex;
+      gap: 2px;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .voiceai-orb-enh.active .voiceai-orb-status-enh {
+      opacity: 1;
+    }
+
+    .voiceai-orb-status-enh span {
+      display: block;
+      width: 2px;
+      border-radius: 2px;
+      background: var(--clr);
+      box-shadow: 0 0 6px rgba(52, 211, 153, 0.7);
+      height: 6px;
+    }
+
+    .voiceai-orb-enh.active .voiceai-orb-status-enh span:nth-child(1) {
+      animation: va-bar 1s ease-in-out infinite 0.00s;
+    }
+
+    .voiceai-orb-enh.active .voiceai-orb-status-enh span:nth-child(2) {
+      animation: va-bar 1s ease-in-out infinite 0.15s;
+    }
+
+    .voiceai-orb-enh.active .voiceai-orb-status-enh span:nth-child(3) {
+      animation: va-bar 1s ease-in-out infinite 0.30s;
+    }
+
+    .voiceai-orb-enh.active .voiceai-orb-status-enh span:nth-child(4) {
+      animation: va-bar 1s ease-in-out infinite 0.15s;
+    }
+
+    .voiceai-orb-enh.active .voiceai-orb-status-enh span:nth-child(5) {
+      animation: va-bar 1s ease-in-out infinite 0.00s;
+    }
+
+    /* Tap label */
+    .voiceai-tap-label {
+      margin-top: 10px;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(52, 211, 153, 0.5);
+      transition: color 0.3s;
+      user-select: none;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    #voiceai-6nzfu624k.is-active .voiceai-tap-label {
+      color: rgba(52, 211, 153, 0.85);
+    }
+
+    /* Status toast */
+    .voiceai-status-msg-orb {
+      position: absolute;
+      bottom: calc(var(--orb) + 52px);
+      right: 0;
+      left: auto;
+      transform: translateY(4px);
+      background: rgba(8, 13, 11, 0.93);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+      color: rgba(255, 255, 255, 0.82);
+      padding: 5px 11px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s, transform 0.3s;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .voiceai-status-msg-orb.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Connection badge */
+    .voiceai-connection-orb {
+      position: absolute;
+      bottom: calc(var(--orb) + 24px);
+      right: 0;
+      left: auto;
+      background: rgba(52, 211, 153, 0.07);
+      border: 1px solid rgba(52, 211, 153, 0.28);
+      color: var(--clr);
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 9px;
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .voiceai-connection-orb.visible {
+      opacity: 1;
+    }
+
+    .voiceai-connection-dot-orb {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: va-pulse-dot 2s infinite;
+    }
+
+    /* Keyframes */
+    @keyframes va-float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    @keyframes va-breathe {
+
+      0%,
+      100% {
+        opacity: 0.7;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.15);
+      }
+    }
+
+    @keyframes va-ripple {
+      0% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: scale(2.3);
+        opacity: 0;
+      }
+    }
+
+    @keyframes va-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes va-bar {
+
+      0%,
+      100% {
+        height: 4px;
+        opacity: 0.5;
+      }
+
+      50% {
+        height: 14px;
+        opacity: 1;
+      }
+    }
+
+    @keyframes va-pulse-dot {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    @keyframes pulse-enh {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+  </style>
+
+  <script>
+    (function () {
+      'use strict';
+
+      if (typeof window.LivekitClient === 'undefined') {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/livekit-client@1.15.4/dist/livekit-client.umd.min.js';
+        script.defer = true;
+        document.head.appendChild(script);
+        script.onload = () => initVoiceOrbEnh();
+        script.onerror = () => {
+          console.error('Failed to load LiveKit SDK');
+          showStatusOrb('SDK load failed', 'error');
+        };
+      } else {
+        initVoiceOrbEnh();
+      }
+
+      function initVoiceOrbEnh() {
+        const container = document.getElementById('voiceai-6nzfu624k');
+        if (!container) return;
+
+        const CONFIG = {
+          locationId: 'aMj8o7nb4yOCgKLoCJzd',
+          widgetId: '69a6ecefcad7c2730a0c829b',
+          voiceAiConfigId: '69a6ecefcad7c2730a0c829b',
+          apiEndpoint: 'https://services.leadconnectorhq.com/chat-widget/public/start-voice-ai-call/',
+          livekitUrl: 'wss://retell-ai-4ihahnq7.livekit.cloud'
+        };
+
+        let room = null;
+        let isCallActive = false;
+        const callButton = container.querySelector('.voiceai-orb-enh');
+        const statusContainer = container.querySelector('.voiceai-orb-status-enh');
+        const statusMsg = container.querySelector('.voiceai-status-msg-orb');
+        const connectionIndicator = container.querySelector('.voiceai-connection-orb');
+        const tapLabel = container.querySelector('.voiceai-tap-label');
+
+        function generateUUID() {
+          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+          });
+        }
+
+        function generateMongoId() {
+          const timestamp = Math.floor(Date.now() / 1000).toString(16).padStart(8, '0');
+          const random = Array.from({ length: 16 }, () =>
+            Math.floor(Math.random() * 16).toString(16)
+          ).join('');
+          return timestamp + random;
+        }
+
+        function generateContactId() {
+          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+          let result = '';
+          for (let i = 0; i < 20; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+          }
+          return result;
+        }
+
+        function updateStatus(active) {
+          if (active) {
+            statusContainer.innerHTML = '<span style="width:4px;height:4px;border-radius:50%;background:currentColor;animation:pulse-enh 0.8s infinite"></span><span style="width:4px;height:4px;border-radius:50%;background:currentColor;animation:pulse-enh 0.8s 0.2s infinite"></span><span style="width:4px;height:4px;border-radius:50%;background:currentColor;animation:pulse-enh 0.8s 0.4s infinite"></span>';
+          } else {
+            statusContainer.innerHTML = '<span class="voiceai-status-dot-enh"></span>';
+          }
+        }
+
+        function showStatusOrb(message, type) {
+          statusMsg.textContent = message;
+          statusMsg.classList.add('visible');
+          if (type === 'error') {
+            statusMsg.style.background = 'rgba(127,29,29,0.95)';
+            statusMsg.style.borderColor = 'rgba(248,113,113,0.3)';
+          } else {
+            statusMsg.style.background = 'rgba(8,13,11,0.93)';
+            statusMsg.style.borderColor = 'rgba(52,211,153,0.2)';
+          }
+          setTimeout(() => statusMsg.classList.remove('visible'), 3000);
+        }
+
+        async function waitForMicrophonePermission() {
+          try {
+            const permission = await navigator.permissions.query({ name: 'microphone' });
+            if (permission.state === 'granted') return true;
+            if (permission.state === 'denied') {
+              showStatusOrb('Microphone access is blocked', 'error');
+              return false;
+            }
+            if (permission.state === 'prompt') {
+              showStatusOrb('Waiting for microphone permission...', '');
+              const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+              stream.getTracks().forEach(track => track.stop());
+              return true;
+            }
+          } catch (err) {
+            console.error('Microphone permission error:', err);
+            showStatusOrb('Microphone permission failed', 'error');
+            return false;
+          }
+        }
+
+        async function startCall() {
+          callButton.disabled = true;
+          callButton.classList.add('loading');
+          showStatusOrb('Initializing call...', '');
+
+          try {
+            const sessionId = generateUUID();
+            const payload = {
+              contactId: generateContactId(),
+              callId: generateMongoId(),
+              widgetId: CONFIG.widgetId,
+              locationId: CONFIG.locationId,
+              sessionId: sessionId,
+              sessionFingerprint: generateUUID(),
+              eventData: {
+                source: 'direct',
+                referrer: document.referrer || '',
+                keyword: '',
+                adSource: '',
+                url_params: {},
+                page: { url: window.location.href, title: document.title },
+                timestamp: Date.now(),
+                campaign: '',
+                contactSessionIds: { ids: [sessionId] },
+                type: 'page-visit',
+                pageVisitType: 'text-widget',
+                domain: window.location.hostname,
+                version: 'v3',
+                parentId: '',
+                parentName: '',
+                fingerprint: null,
+                documentURL: window.location.href
+              }
+            };
+
+            const response = await fetch(CONFIG.apiEndpoint + CONFIG.voiceAiConfigId, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': '*/*',
+                'Authorization': 'Bearer pit-65cb2437-892d-4156-9b8c-9bec076b1d0d'
+              },
+              body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error('API error: ' + response.status);
+
+            const data = await response.json();
+            showStatusOrb('Connecting...', '');
+
+            room = new window.LivekitClient.Room({
+              adaptiveStream: true,
+              dynacast: true,
+              audioCaptureDefaults: {
+                autoGainControl: true,
+                echoCancellation: true,
+                noiseSuppression: true
+              }
+            });
+
+            room.on(window.LivekitClient.RoomEvent.TrackSubscribed, (track) => {
+              if (track.kind === window.LivekitClient.Track.Kind.Audio) {
+                const audioElement = track.attach();
+                audioElement.setAttribute('data-voiceai-audio', 'voiceai-6nzfu624k');
+                document.body.appendChild(audioElement);
+              }
+            });
+
+            room.on(window.LivekitClient.RoomEvent.Disconnected, () => {
+              if (isCallActive) endCall();
+            });
+
+            await room.connect(CONFIG.livekitUrl, data.accessToken);
+            await room.localParticipant.setMicrophoneEnabled(true);
+
+            isCallActive = true;
+            callButton.classList.remove('loading');
+            callButton.classList.add('active');
+            callButton.setAttribute('aria-label', 'End call');
+            updateStatus(true);
+            callButton.disabled = false;
+            connectionIndicator.classList.add('visible');
+            showStatusOrb('Call connected', '');
+
+            container.classList.add('is-active');
+            if (tapLabel) tapLabel.textContent = 'Tap to end';
+
+          } catch (error) {
+            console.error('Error starting call:', error);
+            showStatusOrb('Call failed: ' + error.message, 'error');
+            callButton.classList.remove('loading');
+            callButton.disabled = false;
+          }
+        }
+
+        async function endCall() {
+          callButton.disabled = true;
+
+          try {
+            if (room) {
+              await room.disconnect();
+              room = null;
+            }
+
+            document.querySelectorAll('[data-voiceai-audio="voiceai-6nzfu624k"]').forEach(el => el.remove());
+
+            isCallActive = false;
+            callButton.classList.remove('active');
+            callButton.setAttribute('aria-label', 'Voice AI Assistant');
+            updateStatus(false);
+            callButton.disabled = false;
+            connectionIndicator.classList.remove('visible');
+            showStatusOrb('Call ended', '');
+
+            container.classList.remove('is-active');
+            if (tapLabel) tapLabel.textContent = 'Tap to speak';
+
+          } catch (error) {
+            console.error('Error ending call:', error);
+            callButton.disabled = false;
+          }
+        }
+
+        callButton.addEventListener('click', async () => {
+          if (isCallActive) {
+            endCall();
+            return;
+          }
+          const allowed = await waitForMicrophonePermission();
+          if (!allowed) return;
+          startCall();
+        });
+
+        window.addEventListener('beforeunload', () => {
+          if (room) room.disconnect();
+        });
+      }
+    })();
+  </script>
+
+</body>
+
+</html>

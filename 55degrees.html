@@ -1,690 +1,919 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Voice AI Orb</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VoiceHelden — Solution Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ── Hide global site widgets while on this page ── */
+    body.sdp-active chat-widget:not(#lc-chat-widget-sdp) {
+      display: none !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
     }
 
-    body {
+    /* ── Reset / page shell ── */
+    .sdp-root {
       min-height: 100vh;
-      background-image: url('55degrees.png');
-      background-size: cover;
-      background-position: center top;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(160deg, #f2f7ff 0%, #eaf0f8 55%, #dce8f8 100%);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 0 20px 64px;
+      position: relative;
+      overflow: hidden;
     }
+
+    .sdp-root::before,
+    .sdp-root::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .sdp-root::before {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(26,93,183,0.07) 0%, transparent 70%);
+      top: -180px; right: -140px;
+    }
+    .sdp-root::after {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(26,93,183,0.05) 0%, transparent 70%);
+      bottom: 40px; left: -100px;
+    }
+
+    /* ── Main content grid ── */
+    .sdp-content {
+      width: 100%;
+      max-width: 960px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 56px;
+      align-items: center;
+      margin-top: 64px;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 780px) {
+      .sdp-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        margin-top: 44px;
+      }
+    }
+
+    /* ── Featured image ── */
+    .sdp-featured-image {
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(18, 61, 122, 0.12);
+      margin: 28px 0 20px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .sdp-featured-image:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 48px rgba(18, 61, 122, 0.16);
+    }
+    .sdp-featured-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    /* ── Left column ── */
+    .sdp-eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #1a5db7;
+      margin-bottom: 14px;
+    }
+    .sdp-heading {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800;
+      color: #123d7a;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin: 0 0 16px;
+    }
+    .sdp-sub {
+      font-size: 16px;
+      color: #486596;
+      line-height: 1.7;
+      margin: 0 0 40px;
+      max-width: 440px;
+    }
+
+    /* ── Points list ── */
+    .sdp-points { list-style: disc; padding-left: 18px; margin: 0 0 18px; color: #123d7a; }
+    .sdp-points li { margin-bottom: 10px; color: #486596; }
+
+    /* ── CTA buttons ── */
+    .sdp-contact-actions {
+      margin-top: 24px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .sdp-contact-btn,
+    .sdp-try-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 20px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .sdp-contact-btn {
+      background: #1a5db7;
+      color: white;
+    }
+    .sdp-contact-btn:hover { background: #145a9d; box-shadow: 0 6px 14px rgba(0,0,0,0.08); }
+    .sdp-try-btn {
+      background: #10b981;
+      color: white;
+    }
+    .sdp-try-btn:hover { background: #059669; box-shadow: 0 6px 14px rgba(0,0,0,0.08); }
+
+    /* ── Right: phone widget ── */
+    .sdp-phone-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .sdp-demo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 16px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.28);
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #059669;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .sdp-demo-badge-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: sdp-pulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes sdp-pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(26,93,183,0.4); }
+      50%     { box-shadow: 0 0 0 6px rgba(26,93,183,0); }
+    }
+
+    .sdp-phone-glow {
+      position: absolute;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(26,93,183,0.18) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .sdp-phone {
+      width: 280px;
+      background: #0d1120;
+      border-radius: 46px;
+      padding: 14px 10px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.09),
+        0 40px 80px rgba(10,30,80,0.35),
+        0 10px 30px rgba(18,61,122,0.18);
+      position: relative;
+    }
+    .sdp-phone-notch {
+      width: 90px; height: 26px;
+      background: #0d1120;
+      border-radius: 0 0 18px 18px;
+      margin: 0 auto; position: relative; z-index: 2;
+    }
+    .sdp-phone-screen {
+      background: linear-gradient(165deg, #1e3a6e 0%, #0f1c3a 55%, #0a1228 100%);
+      border-radius: 36px;
+      overflow: hidden;
+      padding: 18px 20px 30px;
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .sdp-status-bar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 18px;
+      padding: 0 4px;
+    }
+    .sdp-call-state {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 20px;
+    }
+
+    /* Avatar */
+    .sdp-avatar-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .sdp-avatar-wrap.ringing::before,
+    .sdp-avatar-wrap.ringing::after {
+      content: '';
+      position: absolute;
+      width: 88px; height: 88px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(1);
+      border-radius: 50%;
+      border: 2px solid rgba(16, 185, 129, 0.4);
+      animation: sdp-avatar-ring 2.4s ease-out infinite;
+      pointer-events: none;
+    }
+    .sdp-avatar-wrap.ringing::after { animation-delay: 1.2s; }
+
+    @keyframes sdp-avatar-ring {
+      0%   { transform: translate(-50%, -50%) scale(1);   opacity: 0.65; }
+      100% { transform: translate(-50%, -50%) scale(1.7); opacity: 0; }
+    }
+
+    .sdp-caller-avatar {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid rgba(255,255,255,0.12);
+      box-shadow:
+        0 0 0 8px rgba(16, 185, 129, 0.1),
+        0 8px 28px rgba(0,0,0,0.4);
+      flex-shrink: 0;
+    }
+    .sdp-caller-avatar-img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .sdp-caller-name {
+      font-size: 20px; font-weight: 700;
+      color: #ffffff; text-align: center;
+      margin-bottom: 8px; line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+    .sdp-ai-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 11px 4px 9px;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.28);
+      border-radius: 999px;
+      font-size: 10px; font-weight: 700;
+      color: #34d399;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+    .sdp-ai-badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: sdp-pulse 1.8s ease-in-out infinite;
+    }
+
+    /* Wave */
+    .sdp-wave {
+      display: flex; align-items: center;
+      gap: 3px; height: 32px; margin-bottom: 24px;
+    }
+    .sdp-wave-bar {
+      width: 3px; border-radius: 3px;
+      background: rgba(255,255,255,0.15);
+      transition: background 0.4s;
+    }
+    .sdp-wave--active .sdp-wave-bar {
+      background: rgba(52, 211, 153, 0.85);
+      animation: sdp-wave 1.2s ease-in-out infinite;
+    }
+    .sdp-wave-bar:nth-child(1)  { height: 10px; animation-delay: 0s; }
+    .sdp-wave-bar:nth-child(2)  { height: 20px; animation-delay: 0.1s; }
+    .sdp-wave-bar:nth-child(3)  { height: 14px; animation-delay: 0.2s; }
+    .sdp-wave-bar:nth-child(4)  { height: 28px; animation-delay: 0.3s; }
+    .sdp-wave-bar:nth-child(5)  { height: 18px; animation-delay: 0.15s; }
+    .sdp-wave-bar:nth-child(6)  { height: 24px; animation-delay: 0.4s; }
+    .sdp-wave-bar:nth-child(7)  { height: 12px; animation-delay: 0.25s; }
+    .sdp-wave-bar:nth-child(8)  { height: 20px; animation-delay: 0.35s; }
+    .sdp-wave-bar:nth-child(9)  { height: 16px; animation-delay: 0.1s; }
+    .sdp-wave-bar:nth-child(10) { height: 8px;  animation-delay: 0.45s; }
+
+    @keyframes sdp-wave {
+      0%, 100% { transform: scaleY(0.35); opacity: 0.5; }
+      50%      { transform: scaleY(1.4);  opacity: 1; }
+    }
+
+    /* Controls */
+    .sdp-controls {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px; width: 100%;
+    }
+    .sdp-tap-hint {
+      font-size: 10.5px;
+      color: rgba(255,255,255,0.38);
+      letter-spacing: 0.03em;
+      margin-bottom: 2px; text-align: center;
+    }
+    .sdp-call-ring-wrap {
+      position: relative;
+      width: 76px; height: 76px;
+      display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0;
+    }
+    .sdp-call-ring-wrap.pulsing::before,
+    .sdp-call-ring-wrap.pulsing::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 76px; height: 76px;
+      border-radius: 50%;
+      border: 2px solid rgba(16, 185, 129, 0.45);
+      animation: sdp-ring 2.2s ease-out infinite;
+      pointer-events: none;
+    }
+    .sdp-call-ring-wrap.pulsing::after { animation-delay: 1.1s; }
+
+    @keyframes sdp-ring {
+      0%   { transform: scale(1);   opacity: 0.8; }
+      100% { transform: scale(1.9); opacity: 0; }
+    }
+
+    .sdp-ctrl-btn {
+      width: 76px; height: 76px;
+      border-radius: 50%; border: none;
+      display: flex; align-items: center;
+      justify-content: center; cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      position: relative; z-index: 1;
+    }
+    .sdp-ctrl-btn:hover:not(:disabled) { transform: scale(1.08); }
+    .sdp-ctrl-btn--end {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      box-shadow: 0 4px 20px rgba(239, 68, 68, 0.55);
+    }
+    .sdp-ctrl-btn--end:hover:not(:disabled) {
+      box-shadow: 0 6px 28px rgba(239, 68, 68, 0.7);
+    }
+    .sdp-ctrl-btn.start {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 4px 26px rgba(16, 185, 129, 0.65);
+    }
+    .sdp-ctrl-btn.start:hover:not(:disabled) {
+      box-shadow: 0 8px 36px rgba(16, 185, 129, 0.85);
+    }
+    .sdp-call-label {
+      font-size: 11px; font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.05em; text-align: center;
+    }
+    .sdp-spinner {
+      width: 26px; height: 26px;
+      border: 2.5px solid rgba(255,255,255,0.25);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: sdp-spin 0.75s linear infinite;
+    }
+    @keyframes sdp-spin { to { transform: rotate(360deg); } }
+
+    .sdp-status-msg {
+      position: absolute; bottom: 100px; left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      color: white; padding: 4px 8px;
+      border-radius: 4px; font-size: 12px;
+      pointer-events: none; white-space: nowrap;
+    }
+
+    /* Phone side buttons */
+    .sdp-btn-right {
+      position: absolute; right: -3px; top: 110px;
+      width: 3px; height: 60px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 0 3px 3px 0;
+    }
+    .sdp-btn-left1, .sdp-btn-left2 {
+      position: absolute; left: -3px; width: 3px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px 0 0 3px;
+    }
+    .sdp-btn-left1 { top: 90px;  height: 36px; }
+    .sdp-btn-left2 { top: 140px; height: 56px; }
+
+    /* Stat chips */
+    .sdp-chips-row {
+      display: flex; gap: 10px; margin-top: 18px;
+      flex-wrap: wrap; justify-content: center;
+    }
+    .sdp-stat-chip {
+      background: white;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 11px; font-weight: 600;
+      color: #123d7a;
+      box-shadow: 0 4px 16px rgba(18,61,122,0.12);
+      white-space: nowrap;
+      display: flex; align-items: center; gap: 6px;
+      border: 1px solid rgba(26,93,183,0.1);
+    }
+
+    /* Footer */
+    .sdp-footer {
+      margin-top: 56px;
+      font-size: 12.5px;
+      color: #95a4bc;
+      text-align: center;
+      position: relative; z-index: 1;
+    }
+    .sdp-footer a { color: #6e80a3; text-decoration: none; }
+    .sdp-footer a:hover { text-decoration: underline; }
   </style>
 </head>
+<body class="sdp-active">
 
-<body>
+<div class="sdp-root">
 
-  <div id="voiceai-6nzfu624k" class="voiceai-orb-wrapper-enh">
+  <!-- Main grid -->
+  <div class="sdp-content">
 
-    <div class="voiceai-scene">
-      <div class="voiceai-glow-bg"></div>
-      <div class="voiceai-ripple r1"></div>
-      <div class="voiceai-ripple r2"></div>
-      <div class="voiceai-ripple r3"></div>
+    <!-- Left column -->
+    <div class="sdp-left">
+      <p class="sdp-eyebrow">VoiceHelden — <span id="niche-label">Vastgoedbeheer</span></p>
+      <h1 class="sdp-heading" id="heading">Vera classificeert en handelt service‑oproepen af — Voorbeeld: Vastgoedbeheer</h1>
+      <div class="sdp-featured-image">
+        <img id="featured-img" src="" alt="VoiceHelden solution showcase" loading="lazy" />
+      </div>
+      <p class="sdp-sub" id="sub-text">Praktijkvoorbeeld en resultaten van onze voice AI voor vastgoedbeheer.</p>
 
-      <button class="voiceai-orb-enh" aria-label="Voice AI Assistant">
-        <div class="voiceai-sheen"></div>
-        <div class="voiceai-spinner-orb"></div>
-
-        <svg class="voiceai-orb-icon-enh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
-          stroke-linecap="round" stroke-linejoin="round">
-          <rect x="8.5" y="2" width="7" height="13" rx="3.5" />
-          <path d="M5 10a7 7 0 0 0 14 0" />
-          <line x1="12" y1="17" x2="12" y2="21" />
-          <line x1="8.5" y1="21" x2="15.5" y2="21" />
-        </svg>
-
-        <div class="voiceai-orb-status-enh">
-          <span></span><span></span><span></span><span></span><span></span>
+      <div class="sdp-info">
+        <div class="sdp-features">
+          <ul class="sdp-points" id="points-list">
+            <!-- populated by JS -->
+          </ul>
         </div>
-      </button>
+
+        <div class="sdp-contact-actions">
+          <a href="#" id="cta-whitepaper" class="sdp-contact-btn">Ontvang meer informatie</a>
+          <a href="#" id="cta-booking" rel="noopener noreferrer" class="sdp-try-btn">
+            Boek een demo
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" style="margin-left:6px">
+              <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
     </div>
 
-    <p class="voiceai-tap-label">Tap to speak</p>
+    <!-- Right column — phone widget -->
+    <div class="sdp-phone-wrap">
 
-    <div class="voiceai-status-msg-orb"></div>
-    <div class="voiceai-connection-orb">
-      <div class="voiceai-connection-dot-orb"></div>
-      <span class="voiceai-connection-text-orb">Live</span>
+      <div class="sdp-demo-badge">
+        <span class="sdp-demo-badge-dot"></span>
+        Live Demo — Probeer het nu
+      </div>
+
+      <div class="sdp-phone-glow"></div>
+
+      <div class="sdp-phone">
+        <div class="sdp-btn-right"></div>
+        <div class="sdp-btn-left1"></div>
+        <div class="sdp-btn-left2"></div>
+        <div class="sdp-phone-notch"></div>
+
+        <div class="sdp-phone-screen">
+          <div class="sdp-status-bar">
+            <span>9:41</span>
+            <span>●●●</span>
+          </div>
+
+          <p class="sdp-call-state" id="call-state">Voice AI Demo</p>
+
+          <div class="sdp-avatar-wrap ringing" id="avatar-wrap">
+            <div class="sdp-caller-avatar">
+              <img
+                src="https://assets.cdn.filesafe.space/fSbZgkQ6O3PpEDfstPtb/media/699f039018feca5ade564e19.webp"
+                alt="Agent avatar"
+                class="sdp-caller-avatar-img"
+              />
+            </div>
+          </div>
+
+          <p class="sdp-caller-name" id="caller-name">Vastgoedbeheer</p>
+
+          <div class="sdp-ai-badge">
+            <span class="sdp-ai-badge-dot"></span>
+            AI Assistent
+          </div>
+
+          <!-- Status message overlay -->
+          <div class="sdp-status-msg" id="status-msg" style="display:none"></div>
+
+          <!-- Sound wave -->
+          <div class="sdp-wave" id="wave">
+            <div class="sdp-wave-bar"></div>
+            <div class="sdp-wave-bar"></div>
+            <div class="sdp-wave-bar"></div>
+            <div class="sdp-wave-bar"></div>
+            <div class="sdp-wave-bar"></div>
+            <div class="sdp-wave-bar"></div>
+            <div class="sdp-wave-bar"></div>
+            <div class="sdp-wave-bar"></div>
+            <div class="sdp-wave-bar"></div>
+            <div class="sdp-wave-bar"></div>
+          </div>
+
+          <!-- Controls -->
+          <div class="sdp-controls">
+            <p class="sdp-tap-hint" id="tap-hint">Tik de knop om de AI te starten</p>
+            <div class="sdp-call-ring-wrap pulsing" id="ring-wrap">
+              <button
+                class="sdp-ctrl-btn sdp-ctrl-btn--end start"
+                id="call-btn"
+                aria-label="Bel demo"
+              >
+                <svg id="phone-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10.68 13.31a16 16 0 003.41 2.6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.45 19.45 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 002.59 3.4z"/>
+                </svg>
+                <div id="spinner" class="sdp-spinner" style="display:none"></div>
+              </button>
+            </div>
+            <span class="sdp-call-label" id="call-label">Bel nu gratis</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stat chips -->
+      <div class="sdp-chips-row">
+        <div class="sdp-stat-chip">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 2l2.39 4.84L18 7.64l-4 3.9.94 5.46L10 14.27 5.06 17l.94-5.46-4-3.9 5.61-.8z" fill="#10b981"/></svg>
+          100% nauwkeurig
+        </div>
+        <div class="sdp-stat-chip">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 2v6l4 2" stroke="#1a5db7" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="10" r="8" stroke="#1a5db7" stroke-width="2"/></svg>
+          Reageert in &lt;0.5s
+        </div>
+      </div>
     </div>
+
+  </div><!-- .sdp-content -->
+
+  <div class="sdp-footer">
+    <p>&copy; VoiceHelden. Alle rechten voorbehouden.</p>
   </div>
 
-  <style>
-    :root {
-      --clr: #34d399;
-      --clr-glow: rgba(52, 211, 153, 0.2);
-      --orb: 72px;
+</div><!-- .sdp-root -->
+
+<script>
+(function () {
+  /* ── Solution data ── */
+  var solutions = {
+    vastgoedbeheer: {
+      heading: 'Vera classificeert en handelt service\u2011oproepen af — Voorbeeld: Vastgoedbeheer',
+      sub: 'Praktijkvoorbeeld en resultaten van onze voice AI voor vastgoedbeheer.',
+      image: 'https://res.cloudinary.com/dfif6jwth/image/upload/v1772813089/Gemini_Generated_Image_632xd5632xd5632x_wy74is.png',
+      agentId: '69a19caf1e2e8f01677c9b87',
+      points: [
+        'Vera classificeert en handelt <strong>service\u2011oproepen</strong> af — voorbeeld: Vastgoedbeheer.',
+        'Filtert <strong>kleine huurder\u2011reparaties</strong>, potentiële beheervragen, administratieve conflicten en veiligheidsrisico\u2019s.',
+        'Directe live\u2011verbinding bij <strong>noodgevallen</strong> of boze bellers; configureerbaar met callback\u2011SLA en ticketing.',
+        'Demo\u2011resultaat: <strong>12 gesprekken</strong>, 100% correcte verwerking en geen ongewenste escalaties.',
+        'Impact: minder menselijke telefoondruk, betere <strong>prioritisering</strong> en een juridisch veilige workflow.'
+      ]
+    },
+    restaurants: {
+      heading: 'Laat telefoonreserveringen en gastvragen soepel verlopen',
+      sub: 'Verhoog reserveringsacceptatie en verminder no\u2011shows met automatische voice flows.',
+      image: 'https://res.cloudinary.com/dfif6jwth/image/upload/v1772813730/Gemini_Generated_Image_uus4qkuus4qkuus4_cmilo7.png',
+      agentId: '69a6ba09f6f7d3d677fa0cda',
+      points: [
+        'Accepteer reserveringen 24/7 met automatische <strong>tafeltoewijzing</strong>.',
+        'Beantwoord snel veelgestelde vragen over <strong>menu</strong> en openingsuren.',
+        'Verstuur directe <strong>bevestigingen</strong> en herinneringen per SMS of e\u2011mail.'
+      ]
+    },
+    makelaars: {
+      heading: 'Kwalificeer leads en plan bezichtigingen moeiteloos',
+      sub: 'Meer afspraken, betere leads: laat de AI intake en planning afhandelen.',
+      image: 'https://res.cloudinary.com/dfif6jwth/image/upload/v1772814022/Gemini_Generated_Image_dw1bnudw1bnudw1b_tcejsd.png',
+      agentId: '69a6ba6a8df6d777741968f4',
+      points: [
+        'Kwalificeer inkomende leads met slimme <strong>vraagstelling</strong> en scoring.',
+        'Plan <strong>bezichtigingen</strong> automatisch en stuur details naar de prospect.',
+        'Integreer leaddata direct met uw <strong>CRM</strong> voor opvolging.'
+      ]
     }
+  };
 
-    #voiceai-6nzfu624k {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      z-index: 9999;
+  var CONFIG = {
+    locationId: 'fSbZgkQ6O3PpEDfstPtb',
+    widgetId: '69a19ede3d473576be0f757a',
+    apiEndpoint: 'https://services.leadconnectorhq.com/chat-widget/public/start-voice-ai-call/',
+    livekitUrl: 'wss://retell-ai-4ihahnq7.livekit.cloud'
+  };
+
+  /* ── Derive slug from URL ── */
+  var pathParts = window.location.pathname.split('/solutions/');
+  var slug = (pathParts[1] || '').replace(/\/$/, '') || 'vastgoedbeheer';
+  var sol = solutions[slug] || solutions.vastgoedbeheer;
+  var voiceAiConfigId = sol.agentId;
+
+  function nicheLabel(s) {
+    if (!s) return 'Vastgoedbeheer';
+    return s.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+  }
+  var label = nicheLabel(slug);
+
+  /* ── Populate page ── */
+  document.getElementById('niche-label').textContent = label;
+  document.getElementById('heading').textContent = sol.heading;
+  document.getElementById('sub-text').textContent = sol.sub;
+  document.getElementById('featured-img').src = sol.image;
+  document.getElementById('caller-name').textContent = label;
+
+  var pointsList = document.getElementById('points-list');
+  sol.points.forEach(function (pt) {
+    var li = document.createElement('li');
+    li.innerHTML = pt;
+    pointsList.appendChild(li);
+  });
+
+  /* ── State ── */
+  var isCallActive = false;
+  var isLoading = false;
+  var room = null;
+  var statusTimer = null;
+
+  /* ── DOM refs ── */
+  var callBtn = document.getElementById('call-btn');
+  var phoneIcon = document.getElementById('phone-icon');
+  var spinner = document.getElementById('spinner');
+  var callLabel = document.getElementById('call-label');
+  var callState = document.getElementById('call-state');
+  var tapHint = document.getElementById('tap-hint');
+  var ringWrap = document.getElementById('ring-wrap');
+  var avatarWrap = document.getElementById('avatar-wrap');
+  var wave = document.getElementById('wave');
+  var statusMsg = document.getElementById('status-msg');
+
+  /* ── Helpers ── */
+  function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0;
+      var v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+  function generateMongoId() {
+    var ts = Math.floor(Date.now() / 1000).toString(16).padStart(8, '0');
+    var rand = '';
+    for (var i = 0; i < 16; i++) rand += Math.floor(Math.random() * 16).toString(16);
+    return ts + rand;
+  }
+  function generateContactId() {
+    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var r = '';
+    for (var i = 0; i < 20; i++) r += chars.charAt(Math.floor(Math.random() * chars.length));
+    return r;
+  }
+
+  function showStatus(msg, type) {
+    type = type || '';
+    statusMsg.textContent = msg;
+    statusMsg.style.display = 'block';
+    statusMsg.style.background = type === 'error' ? 'rgba(220,38,38,0.9)' : 'rgba(0,0,0,0.7)';
+    clearTimeout(statusTimer);
+    statusTimer = setTimeout(function () { statusMsg.style.display = 'none'; }, 3000);
+  }
+
+  function updateUI() {
+    if (isLoading) {
+      phoneIcon.style.display = 'none';
+      spinner.style.display = 'block';
+      callBtn.disabled = true;
+      tapHint.style.display = 'none';
+      ringWrap.classList.remove('pulsing');
+      avatarWrap.classList.remove('ringing');
+      callLabel.textContent = 'Verbinden\u2026';
+      callState.textContent = 'Verbinden\u2026';
+    } else if (isCallActive) {
+      phoneIcon.style.display = 'block';
+      phoneIcon.style.transform = 'rotate(135deg)';
+      spinner.style.display = 'none';
+      callBtn.disabled = false;
+      callBtn.classList.remove('start');
+      callBtn.setAttribute('aria-label', 'Ophangen');
+      tapHint.style.display = 'none';
+      ringWrap.classList.remove('pulsing');
+      avatarWrap.classList.remove('ringing');
+      wave.classList.add('sdp-wave--active');
+      callLabel.textContent = 'Tik om op te hangen';
+      callState.textContent = 'Gesprek gaande';
+    } else {
+      phoneIcon.style.display = 'block';
+      phoneIcon.style.transform = '';
+      spinner.style.display = 'none';
+      callBtn.disabled = false;
+      callBtn.classList.add('start');
+      callBtn.setAttribute('aria-label', 'Bel demo');
+      tapHint.style.display = 'block';
+      ringWrap.classList.add('pulsing');
+      avatarWrap.classList.add('ringing');
+      wave.classList.remove('sdp-wave--active');
+      callLabel.textContent = 'Bel nu gratis';
+      callState.textContent = 'Voice AI Demo';
     }
+  }
 
-    /* Scene */
-    .voiceai-scene {
-      position: relative;
-      width: var(--orb);
-      height: var(--orb);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  function loadLivekitScript() {
+    if (typeof window.LivekitClient !== 'undefined') return Promise.resolve();
+    return new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/livekit-client@1.15.4/dist/livekit-client.umd.min.js';
+      s.defer = true;
+      s.onload = resolve;
+      s.onerror = function () { reject(new Error('Failed to load LiveKit SDK')); };
+      document.head.appendChild(s);
+    });
+  }
 
-    /* Ambient glow */
-    .voiceai-glow-bg {
-      position: absolute;
-      inset: -18px;
-      border-radius: 50%;
-      background: radial-gradient(circle, var(--clr-glow) 0%, transparent 70%);
-      animation: va-breathe 4s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    /* Ripple rings */
-    .voiceai-ripple {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 1px solid var(--clr);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    #voiceai-6nzfu624k.is-active .voiceai-ripple.r1 {
-      animation: va-ripple 2.4s ease-out infinite 0.0s;
-    }
-
-    #voiceai-6nzfu624k.is-active .voiceai-ripple.r2 {
-      animation: va-ripple 2.4s ease-out infinite 0.8s;
-    }
-
-    #voiceai-6nzfu624k.is-active .voiceai-ripple.r3 {
-      animation: va-ripple 2.4s ease-out infinite 1.6s;
-    }
-
-    /* Orb button */
-    .voiceai-orb-enh {
-      position: relative;
-      width: var(--orb);
-      height: var(--orb);
-      border-radius: 50%;
-      border: none;
-      outline: none;
-      cursor: pointer;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      -webkit-tap-highlight-color: transparent;
-
-      background:
-        radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.13) 0%, transparent 52%),
-        linear-gradient(150deg, #1b4332 0%, #0d2b1d 55%, #061510 100%);
-
-      box-shadow:
-        0 0 0 1px rgba(52, 211, 153, 0.18),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.06),
-        0 10px 36px rgba(0, 0, 0, 0.7),
-        0 0 50px rgba(52, 211, 153, 0.07);
-
-      transition: box-shadow 0.4s ease, transform 0.2s ease, background 0.5s ease;
-      animation: va-float 5s ease-in-out infinite;
-    }
-
-    .voiceai-orb-enh:hover:not(:disabled) {
-      box-shadow:
-        0 0 0 1px rgba(52, 211, 153, 0.38),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.09),
-        0 14px 44px rgba(0, 0, 0, 0.65),
-        0 0 70px rgba(52, 211, 153, 0.2);
-      transform: translateY(-4px) scale(1.03);
-      animation-play-state: paused;
-    }
-
-    .voiceai-orb-enh:active:not(:disabled) {
-      transform: scale(0.96);
-    }
-
-    .voiceai-orb-enh.active {
-      background:
-        radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.18) 0%, transparent 52%),
-        linear-gradient(150deg, #1f5c42 0%, #0e3d28 55%, #071f14 100%);
-
-      box-shadow:
-        0 0 0 1.5px rgba(52, 211, 153, 0.55),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.1),
-        0 10px 40px rgba(0, 0, 0, 0.55),
-        0 0 70px rgba(52, 211, 153, 0.32),
-        0 0 110px rgba(52, 211, 153, 0.12);
-    }
-
-    .voiceai-orb-enh:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* Glass sheen */
-    .voiceai-sheen {
-      position: absolute;
-      top: 7%;
-      left: 14%;
-      width: 40%;
-      height: 36%;
-      background: radial-gradient(ellipse, rgba(255, 255, 255, 0.13) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      transform: rotate(-18deg);
-    }
-
-    /* Spinner */
-    .voiceai-spinner-orb {
-      position: absolute;
-      inset: 5px;
-      border-radius: 50%;
-      border: 1.5px solid transparent;
-      border-top-color: var(--clr);
-      border-right-color: rgba(52, 211, 153, 0.25);
-      animation: va-spin 1.1s linear infinite;
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-    }
-
-    .voiceai-orb-enh.loading .voiceai-spinner-orb {
-      opacity: 1;
-    }
-
-    /* Mic icon */
-    .voiceai-orb-icon-enh {
-      width: 26px;
-      height: 26px;
-      color: var(--clr);
-      position: relative;
-      z-index: 2;
-      filter: drop-shadow(0 0 9px rgba(52, 211, 153, 0.55));
-      transition: opacity 0.25s ease, transform 0.25s ease;
-    }
-
-    .voiceai-orb-enh.active .voiceai-orb-icon-enh {
-      opacity: 0;
-      transform: scale(0.55);
-    }
-
-    /* Status waveform bars */
-    .voiceai-orb-status-enh {
-      position: absolute;
-      bottom: 10px;
-      display: flex;
-      gap: 2px;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.25s;
-    }
-
-    .voiceai-orb-enh.active .voiceai-orb-status-enh {
-      opacity: 1;
-    }
-
-    .voiceai-orb-status-enh span {
-      display: block;
-      width: 2px;
-      border-radius: 2px;
-      background: var(--clr);
-      box-shadow: 0 0 6px rgba(52, 211, 153, 0.7);
-      height: 6px;
-    }
-
-    .voiceai-orb-enh.active .voiceai-orb-status-enh span:nth-child(1) {
-      animation: va-bar 1s ease-in-out infinite 0.00s;
-    }
-
-    .voiceai-orb-enh.active .voiceai-orb-status-enh span:nth-child(2) {
-      animation: va-bar 1s ease-in-out infinite 0.15s;
-    }
-
-    .voiceai-orb-enh.active .voiceai-orb-status-enh span:nth-child(3) {
-      animation: va-bar 1s ease-in-out infinite 0.30s;
-    }
-
-    .voiceai-orb-enh.active .voiceai-orb-status-enh span:nth-child(4) {
-      animation: va-bar 1s ease-in-out infinite 0.15s;
-    }
-
-    .voiceai-orb-enh.active .voiceai-orb-status-enh span:nth-child(5) {
-      animation: va-bar 1s ease-in-out infinite 0.00s;
-    }
-
-    /* Tap label */
-    .voiceai-tap-label {
-      margin-top: 10px;
-      font-size: 9px;
-      font-weight: 400;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(52, 211, 153, 0.5);
-      transition: color 0.3s;
-      user-select: none;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-    }
-
-    #voiceai-6nzfu624k.is-active .voiceai-tap-label {
-      color: rgba(52, 211, 153, 0.85);
-    }
-
-    /* Status toast */
-    .voiceai-status-msg-orb {
-      position: absolute;
-      bottom: calc(var(--orb) + 52px);
-      right: 0;
-      left: auto;
-      transform: translateY(4px);
-      background: rgba(8, 13, 11, 0.93);
-      border: 1px solid rgba(52, 211, 153, 0.2);
-      color: rgba(255, 255, 255, 0.82);
-      padding: 5px 11px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-family: 'DM Sans', sans-serif;
-      letter-spacing: 0.04em;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s, transform 0.3s;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-
-    .voiceai-status-msg-orb.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* Connection badge */
-    .voiceai-connection-orb {
-      position: absolute;
-      bottom: calc(var(--orb) + 24px);
-      right: 0;
-      left: auto;
-      background: rgba(52, 211, 153, 0.07);
-      border: 1px solid rgba(52, 211, 153, 0.28);
-      color: var(--clr);
-      padding: 3px 9px;
-      border-radius: 20px;
-      font-size: 9px;
-      font-family: 'DM Sans', sans-serif;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-    }
-
-    .voiceai-connection-orb.visible {
-      opacity: 1;
-    }
-
-    .voiceai-connection-dot-orb {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: currentColor;
-      animation: va-pulse-dot 2s infinite;
-    }
-
-    /* Keyframes */
-    @keyframes va-float {
-
-      0%,
-      100% {
-        transform: translateY(0);
+  function checkMicrophonePermission() {
+    return navigator.permissions.query({ name: 'microphone' }).then(function (perm) {
+      if (perm.state === 'granted') return true;
+      if (perm.state === 'denied') {
+        showStatus('Microfoon toegang is vereist om de demo te starten.', 'error');
+        return false;
       }
+      return navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+        stream.getTracks().forEach(function (t) { t.stop(); });
+        return true;
+      }).catch(function () {
+        showStatus('Microfoon toegang is vereist om de demo te starten.', 'error');
+        return false;
+      });
+    }).catch(function () {
+      showStatus('Kan microfoonpermissies niet controleren.', 'error');
+      return false;
+    });
+  }
 
-      50% {
-        transform: translateY(-6px);
+  function startCall() {
+    isLoading = true;
+    updateUI();
+    showStatus('Initializing call...');
+
+    var sessionId = generateUUID();
+    var payload = {
+      contactId: generateContactId(),
+      callId: generateMongoId(),
+      widgetId: CONFIG.widgetId,
+      locationId: CONFIG.locationId,
+      sessionId: sessionId,
+      sessionFingerprint: generateUUID(),
+      agentId: voiceAiConfigId,
+      eventData: {
+        source: 'direct',
+        referrer: document.referrer || '',
+        keyword: '',
+        adSource: '',
+        url_params: {},
+        page: { url: window.location.href, title: document.title },
+        timestamp: Date.now(),
+        campaign: '',
+        contactSessionIds: { ids: [sessionId] },
+        type: 'page-visit',
+        pageVisitType: 'text-widget',
+        domain: window.location.hostname,
+        version: 'v3',
+        parentId: '',
+        parentName: '',
+        fingerprint: null,
+        documentURL: window.location.href
       }
-    }
+    };
 
-    @keyframes va-breathe {
-
-      0%,
-      100% {
-        opacity: 0.7;
-        transform: scale(1);
-      }
-
-      50% {
-        opacity: 1;
-        transform: scale(1.15);
-      }
-    }
-
-    @keyframes va-ripple {
-      0% {
-        transform: scale(1);
-        opacity: 0.5;
-      }
-
-      100% {
-        transform: scale(2.3);
-        opacity: 0;
-      }
-    }
-
-    @keyframes va-spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes va-bar {
-
-      0%,
-      100% {
-        height: 4px;
-        opacity: 0.5;
-      }
-
-      50% {
-        height: 14px;
-        opacity: 1;
-      }
-    }
-
-    @keyframes va-pulse-dot {
-
-      0%,
-      100% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: 0.4;
-      }
-    }
-
-    @keyframes pulse-enh {
-
-      0%,
-      100% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: 0.4;
-      }
-    }
-  </style>
-
-  <script>
-    (function () {
-      'use strict';
-
-      if (typeof window.LivekitClient === 'undefined') {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/livekit-client@1.15.4/dist/livekit-client.umd.min.js';
-        script.defer = true;
-        document.head.appendChild(script);
-        script.onload = () => initVoiceOrbEnh();
-        script.onerror = () => {
-          console.error('Failed to load LiveKit SDK');
-          showStatusOrb('SDK load failed', 'error');
-        };
-      } else {
-        initVoiceOrbEnh();
-      }
-
-      function initVoiceOrbEnh() {
-        const container = document.getElementById('voiceai-6nzfu624k');
-        if (!container) return;
-
-        const CONFIG = {
-          locationId: 'aMj8o7nb4yOCgKLoCJzd',
-          widgetId: '69a6ecefcad7c2730a0c829b',
-          voiceAiConfigId: '69a6ecefcad7c2730a0c829b',
-          apiEndpoint: 'https://services.leadconnectorhq.com/chat-widget/public/start-voice-ai-call/',
-          livekitUrl: 'wss://retell-ai-4ihahnq7.livekit.cloud'
-        };
-
-        let room = null;
-        let isCallActive = false;
-        const callButton = container.querySelector('.voiceai-orb-enh');
-        const statusContainer = container.querySelector('.voiceai-orb-status-enh');
-        const statusMsg = container.querySelector('.voiceai-status-msg-orb');
-        const connectionIndicator = container.querySelector('.voiceai-connection-orb');
-        const tapLabel = container.querySelector('.voiceai-tap-label');
-
-        function generateUUID() {
-          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            const r = Math.random() * 16 | 0;
-            const v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-          });
+    fetch(CONFIG.apiEndpoint + voiceAiConfigId, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': '*/*' },
+      body: JSON.stringify(payload)
+    })
+    .then(function (res) {
+      if (!res.ok) throw new Error('API error: ' + res.status);
+      return res.json();
+    })
+    .then(function (data) {
+      showStatus('Connecting...');
+      return loadLivekitScript().then(function () { return data; });
+    })
+    .then(function (data) {
+      room = new window.LivekitClient.Room({
+        adaptiveStream: true,
+        dynacast: true,
+        audioCaptureDefaults: {
+          autoGainControl: true,
+          echoCancellation: true,
+          noiseSuppression: true
         }
+      });
 
-        function generateMongoId() {
-          const timestamp = Math.floor(Date.now() / 1000).toString(16).padStart(8, '0');
-          const random = Array.from({ length: 16 }, () =>
-            Math.floor(Math.random() * 16).toString(16)
-          ).join('');
-          return timestamp + random;
+      room.on(window.LivekitClient.RoomEvent.TrackSubscribed, function (track) {
+        if (track.kind === window.LivekitClient.Track.Kind.Audio) {
+          var el = track.attach();
+          el.setAttribute('data-voiceai-audio', 'voiceai-6nzfu624k');
+          document.body.appendChild(el);
         }
+      });
 
-        function generateContactId() {
-          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-          let result = '';
-          for (let i = 0; i < 20; i++) {
-            result += chars.charAt(Math.floor(Math.random() * chars.length));
-          }
-          return result;
-        }
+      room.on(window.LivekitClient.RoomEvent.Disconnected, function () {
+        if (isCallActive) endCall();
+      });
 
-        function updateStatus(active) {
-          if (active) {
-            statusContainer.innerHTML = '<span style="width:4px;height:4px;border-radius:50%;background:currentColor;animation:pulse-enh 0.8s infinite"></span><span style="width:4px;height:4px;border-radius:50%;background:currentColor;animation:pulse-enh 0.8s 0.2s infinite"></span><span style="width:4px;height:4px;border-radius:50%;background:currentColor;animation:pulse-enh 0.8s 0.4s infinite"></span>';
-          } else {
-            statusContainer.innerHTML = '<span class="voiceai-status-dot-enh"></span>';
-          }
-        }
+      return room.connect(CONFIG.livekitUrl, data.accessToken).then(function () {
+        return room.localParticipant.setMicrophoneEnabled(true);
+      });
+    })
+    .then(function () {
+      isCallActive = true;
+      isLoading = false;
+      updateUI();
+      showStatus('Call connected');
+    })
+    .catch(function (err) {
+      console.error('Error starting call:', err);
+      showStatus('Call failed: ' + err.message, 'error');
+      isLoading = false;
+      updateUI();
+    });
+  }
 
-        function showStatusOrb(message, type) {
-          statusMsg.textContent = message;
-          statusMsg.classList.add('visible');
-          if (type === 'error') {
-            statusMsg.style.background = 'rgba(127,29,29,0.95)';
-            statusMsg.style.borderColor = 'rgba(248,113,113,0.3)';
-          } else {
-            statusMsg.style.background = 'rgba(8,13,11,0.93)';
-            statusMsg.style.borderColor = 'rgba(52,211,153,0.2)';
-          }
-          setTimeout(() => statusMsg.classList.remove('visible'), 3000);
-        }
+  function endCall() {
+    isLoading = true;
+    updateUI();
+    var done = function () {
+      document.querySelectorAll('[data-voiceai-audio="voiceai-6nzfu624k"]').forEach(function (el) { el.remove(); });
+      isCallActive = false;
+      isLoading = false;
+      updateUI();
+    };
 
-        async function waitForMicrophonePermission() {
-          try {
-            const permission = await navigator.permissions.query({ name: 'microphone' });
-            if (permission.state === 'granted') return true;
-            if (permission.state === 'denied') {
-              showStatusOrb('Microphone access is blocked', 'error');
-              return false;
-            }
-            if (permission.state === 'prompt') {
-              showStatusOrb('Waiting for microphone permission...', '');
-              const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-              stream.getTracks().forEach(track => track.stop());
-              return true;
-            }
-          } catch (err) {
-            console.error('Microphone permission error:', err);
-            showStatusOrb('Microphone permission failed', 'error');
-            return false;
-          }
-        }
+    if (room) {
+      room.disconnect().then(done).catch(function (err) {
+        console.error('Error ending call:', err);
+        done();
+      });
+      room = null;
+    } else {
+      done();
+    }
+  }
 
-        async function startCall() {
-          callButton.disabled = true;
-          callButton.classList.add('loading');
-          showStatusOrb('Initializing call...', '');
+  callBtn.addEventListener('click', function () {
+    if (isCallActive) {
+      endCall();
+    } else {
+      checkMicrophonePermission().then(function (ok) {
+        if (ok) startCall();
+      });
+    }
+  });
 
-          try {
-            const sessionId = generateUUID();
-            const payload = {
-              contactId: generateContactId(),
-              callId: generateMongoId(),
-              widgetId: CONFIG.widgetId,
-              locationId: CONFIG.locationId,
-              sessionId: sessionId,
-              sessionFingerprint: generateUUID(),
-              eventData: {
-                source: 'direct',
-                referrer: document.referrer || '',
-                keyword: '',
-                adSource: '',
-                url_params: {},
-                page: { url: window.location.href, title: document.title },
-                timestamp: Date.now(),
-                campaign: '',
-                contactSessionIds: { ids: [sessionId] },
-                type: 'page-visit',
-                pageVisitType: 'text-widget',
-                domain: window.location.hostname,
-                version: 'v3',
-                parentId: '',
-                parentName: '',
-                fingerprint: null,
-                documentURL: window.location.href
-              }
-            };
-
-            const response = await fetch(CONFIG.apiEndpoint + CONFIG.voiceAiConfigId, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': '*/*',
-                'Authorization': 'Bearer pit-65cb2437-892d-4156-9b8c-9bec076b1d0d'
-              },
-              body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) throw new Error('API error: ' + response.status);
-
-            const data = await response.json();
-            showStatusOrb('Connecting...', '');
-
-            room = new window.LivekitClient.Room({
-              adaptiveStream: true,
-              dynacast: true,
-              audioCaptureDefaults: {
-                autoGainControl: true,
-                echoCancellation: true,
-                noiseSuppression: true
-              }
-            });
-
-            room.on(window.LivekitClient.RoomEvent.TrackSubscribed, (track) => {
-              if (track.kind === window.LivekitClient.Track.Kind.Audio) {
-                const audioElement = track.attach();
-                audioElement.setAttribute('data-voiceai-audio', 'voiceai-6nzfu624k');
-                document.body.appendChild(audioElement);
-              }
-            });
-
-            room.on(window.LivekitClient.RoomEvent.Disconnected, () => {
-              if (isCallActive) endCall();
-            });
-
-            await room.connect(CONFIG.livekitUrl, data.accessToken);
-            await room.localParticipant.setMicrophoneEnabled(true);
-
-            isCallActive = true;
-            callButton.classList.remove('loading');
-            callButton.classList.add('active');
-            callButton.setAttribute('aria-label', 'End call');
-            updateStatus(true);
-            callButton.disabled = false;
-            connectionIndicator.classList.add('visible');
-            showStatusOrb('Call connected', '');
-
-            container.classList.add('is-active');
-            if (tapLabel) tapLabel.textContent = 'Tap to end';
-
-          } catch (error) {
-            console.error('Error starting call:', error);
-            showStatusOrb('Call failed: ' + error.message, 'error');
-            callButton.classList.remove('loading');
-            callButton.disabled = false;
-          }
-        }
-
-        async function endCall() {
-          callButton.disabled = true;
-
-          try {
-            if (room) {
-              await room.disconnect();
-              room = null;
-            }
-
-            document.querySelectorAll('[data-voiceai-audio="voiceai-6nzfu624k"]').forEach(el => el.remove());
-
-            isCallActive = false;
-            callButton.classList.remove('active');
-            callButton.setAttribute('aria-label', 'Voice AI Assistant');
-            updateStatus(false);
-            callButton.disabled = false;
-            connectionIndicator.classList.remove('visible');
-            showStatusOrb('Call ended', '');
-
-            container.classList.remove('is-active');
-            if (tapLabel) tapLabel.textContent = 'Tap to speak';
-
-          } catch (error) {
-            console.error('Error ending call:', error);
-            callButton.disabled = false;
-          }
-        }
-
-        callButton.addEventListener('click', async () => {
-          if (isCallActive) {
-            endCall();
-            return;
-          }
-          const allowed = await waitForMicrophonePermission();
-          if (!allowed) return;
-          startCall();
-        });
-
-        window.addEventListener('beforeunload', () => {
-          if (room) room.disconnect();
-        });
-      }
-    })();
-  </script>
+  /* initial render */
+  updateUI();
+})();
+</script>
 
 </body>
-
 </html>

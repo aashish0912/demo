@@ -693,7 +693,7 @@
         <p class="sdp-eyebrow">VoiceHelden — <span id="niche-label">Demo</span></p>
         <h1 class="sdp-heading" id="heading"></h1>
         <div class="sdp-featured-image">
-          <img id="featured-img" src="" alt="VoiceHelden solution showcase" loading="lazy" />
+          <img id="featured-img" src="" alt="VoiceHelden demo" loading="lazy" />
         </div>
         <p class="sdp-sub" id="sub-text"></p>
 
@@ -702,9 +702,9 @@
             <ul class="sdp-points" id="points-list"></ul>
           </div>
           <div class="sdp-contact-actions">
-            <a href="#" id="cta-whitepaper" class="sdp-contact-btn">Ontvang meer informatie</a>
+            <a href="#" id="cta-whitepaper" class="sdp-contact-btn">Ontvang eerst meer informatie</a>
             <a href="#" id="cta-booking" rel="noopener noreferrer" class="sdp-try-btn">
-              Boek een demo
+              Start een maand gratis
               <svg width="16" height="16" viewBox="0 0 20 20" fill="none" style="margin-left:6px">
                 <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                   stroke-linejoin="round" />
@@ -749,7 +749,7 @@
 
             <div class="sdp-ai-badge">
               <span class="sdp-ai-badge-dot"></span>
-              AI Assistent
+              Demo AI Assistent
             </div>
 
             <div class="sdp-status-msg" id="status-msg" style="display:none"></div>
@@ -769,9 +769,8 @@
 
             <!-- Controls -->
             <div class="sdp-controls">
-              <p class="sdp-tap-hint" id="tap-hint">Tik de knop om de AI te starten</p>
               <div class="sdp-call-ring-wrap pulsing" id="ring-wrap">
-                <button class="sdp-ctrl-btn sdp-ctrl-btn--end start" id="call-btn" aria-label="Bel demo">
+                <button class="sdp-ctrl-btn sdp-ctrl-btn--end start" id="call-btn" aria-label="Start demo">
                   <svg id="phone-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white"
                     stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <path
@@ -780,7 +779,7 @@
                   <div id="spinner" class="sdp-spinner" style="display:none"></div>
                 </button>
               </div>
-              <span class="sdp-call-label" id="call-label">Bel nu gratis</span>
+              <span class="sdp-call-label" id="call-label">Start gesprek</span>
             </div>
           </div>
         </div>
@@ -792,14 +791,14 @@
               <path d="M10 2l2.39 4.84L18 7.64l-4 3.9.94 5.46L10 14.27 5.06 17l.94-5.46-4-3.9 5.61-.8z"
                 fill="#10b981" />
             </svg>
-            100% nauwkeurig
+            Probeer 10 minuten
           </div>
           <div class="sdp-stat-chip">
             <svg width="13" height="13" viewBox="0 0 20 20" fill="none">
               <path d="M10 2v6l4 2" stroke="#1a5db7" stroke-width="2" stroke-linecap="round" />
               <circle cx="10" cy="10" r="8" stroke="#1a5db7" stroke-width="2" />
             </svg>
-            Reageert in &lt;0.5s
+            1 maand gratis proefperiode
           </div>
         </div>
       </div>
@@ -849,7 +848,32 @@
          ═══════════════════════════════════════ */
       var params = new URLSearchParams(window.location.search);
 
-      var GHL_AGENT_ID = params.get('agent') || '';
+      /* ── Slug-based routing (clean URLs) ── */
+      var slugMap = {
+        '123magazijninrichting': { agent: '69a7015019b0e66ccb3472de', name: '123 Magazijninrichting' },
+        '55degrees':            { agent: '69a6ecefcad7c2730a0c829b', name: '55 Degrees' },
+        'aandepole':            { agent: '69a599d2a27e8cc207e3d2f7', name: 'Aan de Pole' },
+        'admiraal':             { agent: '69934c46e723d4d4f175ac0c', name: 'Admiraal' },
+        'allsafe':              { agent: '69a7003c7bf8bcc28189be45', name: 'Allsafe' },
+        'amsterdambeautiful':   { agent: '69a70a1ed5ad95084e26e7dd', name: 'Amsterdam Beautiful' },
+        'antwoordservicenijmegen': { agent: '69a6eeb41be9eee6d9b83343', name: 'Antwoordservice Nijmegen' },
+        'bic-vastgoed':         { agent: '69a7095fcad7c2983a0c8a1f', name: 'BIC Vastgoed' },
+        'cityhomes':            { agent: '6993287541bfe06577056326', name: 'Cityhomes' },
+        'flo':                  { agent: '6981db1f92dc1b5e159f980d', name: 'Flo' },
+        'highfive':             { agent: '69a70904e8447fceb9c005ae', name: 'Highfive' },
+        'insync-re':            { agent: '69a709c2b537eee8e5070fc2', name: 'Insync RE' },
+        'joinmeselfstorage':    { agent: '69a6ff52d5ad9524e426e52d', name: 'Join Me Self Storage' },
+        'sturmmakelaardij':     { agent: '6993710cf3ec6dc93c3a3108', name: 'Sturm Makelaardij' },
+        'vandesteege':          { agent: '6993134b8d9623f0b3736843', name: 'Van de Steege' },
+        'vantilburgmontage':    { agent: '69a705e9658ccb3f498602b6', name: 'Van Tilburg Montage' },
+        'vastgoedbeheerkeizer': { agent: '69933400e723d48fdd75a83c', name: 'Vastgoedbeheer Keizer' },
+        'werelocate':           { agent: '69a69b4219b0e6474f3464e5', name: 'WeRelocate' }
+      };
+
+      var slug = window.location.pathname.replace(/^\/|\/$/g, '').toLowerCase();
+      var slugConfig = slugMap[slug] || {};
+
+      var GHL_AGENT_ID = params.get('agent') || slugConfig.agent || '';
 
       /* Validate required params */
       if (!GHL_AGENT_ID) {
@@ -862,60 +886,39 @@
 
       var brandName = params.get('brand') || 'VoiceHelden';
       var accentColor = '#' + (params.get('accent') || '1a5db7');
-      var bookingUrl = params.get('booking') || 'https://koalendar.com/e/voicehelden-gepersonaliseerde-demo';
+      var bookingUrl = params.get('booking') || 'https://api.voicehelden.nl/widget/form/G1yubGJYqisgyQwesQLP';
       var whitepaperUrl = params.get('whitepaper') || '/whitepaper';
       var customAvatar = params.get('avatar') || '';
 
       /* ── GHL config (overridable via query params) ── */
       var CONFIG = {
-        locationId: params.get('locationId') || 'fSbZgkQ6O3PpEDfstPtb',
-        widgetId: params.get('widgetId') || GHL_AGENT_ID,
+        locationId: params.get('locationId') || 'aMj8o7nb4yOCgKLoCJzd',
+        widgetId: params.get('widgetId') || '69a599d2a27e8cc207e3d2f7',
         apiEndpoint: 'https://services.leadconnectorhq.com/chat-widget/public/start-voice-ai-call/',
         livekitUrl: 'wss://retell-ai-4ihahnq7.livekit.cloud'
       };
 
       /* ── Agent → content mapping (same data as solutions pages) ── */
       var agentContent = {
+
         '69a19caf1e2e8f01677c9b87': {
-          name: 'Vastgoedbeheer',
-          heading: 'Vera classificeert en handelt service\u2011oproepen af \u2014 Voorbeeld: Vastgoedbeheer',
-          sub: 'Praktijkvoorbeeld en resultaten van onze voice AI voor vastgoedbeheer.',
+
+          name: 'Uw Demo-agent',
+          heading: 'Ervaar uw AI-agent live in een demo',
+          sub: 'Test direct hoe uw AI-agent gesprekken voert, vragen afhandelt en klanten helpt.',
           image: 'https://res.cloudinary.com/dfif6jwth/image/upload/v1772813089/Gemini_Generated_Image_632xd5632xd5632x_wy74is.png',
           points: [
-            'Vera classificeert en handelt <strong>service\u2011oproepen</strong> af \u2014 voorbeeld: Vastgoedbeheer.',
-            'Filtert <strong>kleine huurder\u2011reparaties</strong>, potenti\u00eble beheervragen, administratieve conflicten en veiligheidsrisico\u2019s.',
-            'Directe live\u2011verbinding bij <strong>noodgevallen</strong> of boze bellers; configureerbaar met callback\u2011SLA en ticketing.',
-            'Demo\u2011resultaat: <strong>12 gesprekken</strong>, 100% correcte verwerking en geen ongewenste escalaties.',
-            'Impact: minder menselijke telefoondruk, betere <strong>prioritisering</strong> en een juridisch veilige workflow.'
-          ]
-        },
-        '69a6ba09f6f7d3d677fa0cda': {
-          name: 'Restaurants',
-          heading: 'Laat telefoonreserveringen en gastvragen soepel verlopen',
-          sub: 'Verhoog reserveringsacceptatie en verminder no\u2011shows met automatische voice flows.',
-          image: 'https://res.cloudinary.com/dfif6jwth/image/upload/v1772813730/Gemini_Generated_Image_uus4qkuus4qkuus4_cmilo7.png',
-          points: [
-            'Accepteer reserveringen 24/7 met automatische <strong>tafeltoewijzing</strong>.',
-            'Beantwoord snel veelgestelde vragen over <strong>menu</strong> en openingsuren.',
-            'Verstuur directe <strong>bevestigingen</strong> en herinneringen per SMS of e\u2011mail.'
-          ]
-        },
-        '69a6ba6a8df6d777741968f4': {
-          name: 'Makelaars',
-          heading: 'Kwalificeer leads en plan bezichtigingen moeiteloos',
-          sub: 'Meer afspraken, betere leads: laat de AI intake en planning afhandelen.',
-          image: 'https://res.cloudinary.com/dfif6jwth/image/upload/v1772814022/Gemini_Generated_Image_dw1bnudw1bnudw1b_tcejsd.png',
-          points: [
-            'Kwalificeer inkomende leads met slimme <strong>vraagstelling</strong> en scoring.',
-            'Plan <strong>bezichtigingen</strong> automatisch en stuur details naar de prospect.',
-            'Integreer leaddata direct met uw <strong>CRM</strong> voor opvolging.'
+            'Uw demo is nu beschikbaar voor een <strong>live webcall</strong>.',
+            'De demoagent verdwijnt na in totaal <strong>10 minuten</strong> gesprekstijd.',
+            'Ontdek hoe uw agent vragen beantwoordt en gesprekken <strong>automatiseert</strong>.',
+            'Na de demo kunt u direct starten met een <strong>gratis proefperiode van 1 maand</strong>.'
           ]
         }
       };
 
       /* ── Resolve content: agent lookup first, then param overrides ── */
       var sol = agentContent[GHL_AGENT_ID] || {};
-      var label = params.get('name') || sol.name || 'AI Assistent';
+      var label = params.get('name') || sol.name || slugConfig.name || 'Demo';
       var heading = params.get('heading') || sol.heading || 'Ervaar onze Voice AI in actie';
       var sub = params.get('sub') || sol.sub || 'Test onze AI-assistent en ontdek hoe deze uw bedrijf kan helpen.';
       var image = params.get('image') || sol.image || '';
@@ -1001,7 +1004,6 @@
       var spinner = document.getElementById('spinner');
       var callLabel = document.getElementById('call-label');
       var callState = document.getElementById('call-state');
-      var tapHint = document.getElementById('tap-hint');
       var ringWrap = document.getElementById('ring-wrap');
       var avatarWrap = document.getElementById('avatar-wrap');
       var wave = document.getElementById('wave');
@@ -1021,7 +1023,6 @@
           phoneIcon.style.display = 'none';
           spinner.style.display = 'block';
           callBtn.disabled = true;
-          tapHint.style.display = 'none';
           ringWrap.classList.remove('pulsing');
           avatarWrap.classList.remove('ringing');
           callLabel.textContent = 'Verbinden\u2026';
@@ -1033,11 +1034,10 @@
           callBtn.disabled = false;
           callBtn.classList.remove('start');
           callBtn.setAttribute('aria-label', 'Ophangen');
-          tapHint.style.display = 'none';
           ringWrap.classList.remove('pulsing');
           avatarWrap.classList.remove('ringing');
           wave.classList.add('sdp-wave--active');
-          callLabel.textContent = 'Tik om op te hangen';
+          callLabel.textContent = 'Gesprek beeindigen';
           callState.textContent = 'Gesprek gaande';
         } else {
           phoneIcon.style.display = 'block';
@@ -1045,12 +1045,11 @@
           spinner.style.display = 'none';
           callBtn.disabled = false;
           callBtn.classList.add('start');
-          callBtn.setAttribute('aria-label', 'Bel demo');
-          tapHint.style.display = 'block';
+          callBtn.setAttribute('aria-label', 'Start demo');
           ringWrap.classList.add('pulsing');
           avatarWrap.classList.add('ringing');
           wave.classList.remove('sdp-wave--active');
-          callLabel.textContent = 'Bel nu gratis';
+          callLabel.textContent = 'Start gesprek';
           callState.textContent = 'Voice AI Demo';
         }
       }
@@ -1071,14 +1070,14 @@
         return navigator.permissions.query({ name: 'microphone' }).then(function (perm) {
           if (perm.state === 'granted') return true;
           if (perm.state === 'denied') {
-            showStatus('Microfoon toegang is vereist om de demo te starten.', 'error');
+            showStatus('Microfoontoegang is vereist om de demo te starten.', 'error');
             return false;
           }
           return navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
             stream.getTracks().forEach(function (t) { t.stop(); });
             return true;
           }).catch(function () {
-            showStatus('Microfoon toegang is vereist om de demo te starten.', 'error');
+            showStatus('Microfoontoegang is vereist om de demo te starten.', 'error');
             return false;
           });
         }).catch(function () {
@@ -1090,7 +1089,7 @@
       function startCall() {
         isLoading = true;
         updateUI();
-        showStatus('Initializing call...');
+        showStatus('Demo wordt gestart...');
 
         var sessionId = generateUUID();
         var payload = {
@@ -1132,7 +1131,7 @@
           return res.json();
         })
         .then(function (data) {
-          showStatus('Connecting...');
+          showStatus('Verbinden...');
           return loadLivekitScript().then(function () { return data; });
         })
         .then(function (data) {
@@ -1166,11 +1165,11 @@
           isCallActive = true;
           isLoading = false;
           updateUI();
-          showStatus('Call connected');
+          showStatus('Verbonden');
         })
         .catch(function (err) {
           console.error('Error starting call:', err);
-          showStatus('Call failed: ' + err.message, 'error');
+          showStatus('Demo kon niet worden gestart: ' + err.message, 'error');
           isLoading = false;
           updateUI();
         });

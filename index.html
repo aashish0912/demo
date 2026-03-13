@@ -835,7 +835,7 @@
     booking    : booking/demo CTA URL
     whitepaper : whitepaper/info CTA URL
     locationId : GHL location ID (default: fSbZgkQ6O3PpEDfstPtb)
-    widgetId   : GHL widget ID (default: 69a19ede3d473576be0f757a)
+    widgetId   : GHL widget ID (default: same as agent)
 
   EXAMPLE:
     demo.html?agent=69a19caf1e2e8f01677c9b87&name=Vera&brand=MijnBedrijf
@@ -869,7 +869,7 @@
       /* ── GHL config (overridable via query params) ── */
       var CONFIG = {
         locationId: params.get('locationId') || 'fSbZgkQ6O3PpEDfstPtb',
-        widgetId: params.get('widgetId') || '69a19ede3d473576be0f757a',
+        widgetId: params.get('widgetId') || GHL_AGENT_ID,
         apiEndpoint: 'https://services.leadconnectorhq.com/chat-widget/public/start-voice-ai-call/',
         livekitUrl: 'wss://retell-ai-4ihahnq7.livekit.cloud'
       };
